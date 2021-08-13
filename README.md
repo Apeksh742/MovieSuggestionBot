@@ -24,7 +24,7 @@ To use this code in your lamda function, you have to do few things:
 3. These are some things you can customize:\
     i) **category** : Slot variable to take input from user\
    ii) **WelcomeIntent** : Intent for greeting user\
-  iii) **RecommendMovie** : Intent for recommend movies\
+  iii) **RecommendMovie** : Intent for recommending movies
 
 ## Amazon Lex Console configuration of my bot: 
 ![Amazon Lex Configuration 1](https://github.com/Apeksh742/MovieRecommendationBot/blob/main/images/LexSS1.png?raw=true)
