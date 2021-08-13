@@ -3,6 +3,8 @@ A simple bot made using AWS Amazon Lex to recommend movies to its users.
 
 ### What is Amazon Lex?
 
+![Amazon Lex](https://github.com/Apeksh742/MovieRecommendationBot/blob/main/images/lexBot.png?raw=true)
+
 > Amazon Lex is an AWS service for building conversational interfaces for applications using voice and text. Amazon Lex provides the deep functionality and flexibility of natural language understanding (NLU) and automatic speech recognition (ASR) so you can build highly engaging user experiences with lifelike, conversational interactions, and create new categories of products.
 
 ### Useful Resources: 
