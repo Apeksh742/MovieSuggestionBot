@@ -28,7 +28,7 @@ To use this code in your lamda function, you have to do few things:
    ii) **WelcomeIntent** : Intent for greeting user\
   iii) **RecommendMovie** : Intent for recommending movies
   
-## Source of Movies data:
+## Source of Movie Dataset API:
 
 ### [The Movie Database (TMDb)](https://www.themoviedb.org/)
 
