@@ -32,3 +32,7 @@ To use this code in your lamda function, you have to do few things:
 ![Amazon Lex Configuration 1](https://github.com/Apeksh742/MovieRecommendationBot/blob/main/images/LexSS1.png?raw=true)
 
 ![Amazon Lex Configuration 2](https://github.com/Apeksh742/MovieRecommendationBot/blob/main/images/LexSS2.png?raw=true)
+
+### Working
+
+![Amazon Lex Bot Working](https://github.com/Apeksh742/MovieRecommendationBot/blob/main/images/chatBot.png?raw=true)
