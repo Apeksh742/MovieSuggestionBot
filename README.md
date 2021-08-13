@@ -19,7 +19,7 @@ These are some of the useful resources to help you get started creating your fir
 ### Usage
 To use this code in your lamda function, you have to do few things:
 1. Register and get your api key from [here](https://developers.themoviedb.org/3/getting-started/introduction) to get list of movies.\
-   Give **Application URL** = "NA" if you don't have one when they ask for your app details.
+   ```Note:``` Give **Application URL** = "NA" if you don't have one when they ask for your app details.
 2. Set **api_key** as an environmental variable in your lambda function.
 3. These are some things you can customize:\
     i) **category** : Slot variable to take input from user\
@@ -27,7 +27,6 @@ To use this code in your lamda function, you have to do few things:
   iii) **RecommendMovie** : Intent for recommend movies\
 
 ## Amazon Lex Console configuration of my bot: 
-![Amazon Lex Configuration 1](https://github.com/Apeksh742/MovieRecommendationBot/blob/main/images/LexSS1.png?raw=true)
+![Amazon Lex Configuration 1](https://github.com/Apeksh742/MovieRecommendationBot/blob/main/images/LexSS1.png?raw=true)\
 
-
-```Note:``` **api_key** is an environment variable in given Lambda code. So do update it in your respective Lambda code . 
+![Amazon Lex Configuration 2](https://github.com/Apeksh742/MovieRecommendationBot/blob/main/images/LexSS2.png?raw=true)
