@@ -39,6 +39,19 @@ def close(session_attributes, fulfillment_state, message):
     }
     return response
 
+def closeWithResponseCard(session_attributes, fulfillment_state, message, response_card):
+    response = {
+        'sessionAttributes': session_attributes,
+        'dialogAction': {
+            'type': 'Close',
+            'fulfillmentState': fulfillment_state,
+            'message': message,
+            'responseCard': response_card
+        }
+    }
+    return response    
+
+
 def closeWelcomeIntent(session_attributes, fulfillment_state, message, response_card):
     response = {
         'sessionAttributes': session_attributes,
@@ -59,8 +72,9 @@ def delegate(session_attributes, slots):
             'slots': slots
         }
     }
-
+    
 """ --- Build a responseCard with a title, subtitle, and an optional set of options which should be displayed as buttons --- """    
+
 def build_response_card(title, subtitle, options):
     buttons = None
     if options is not None:
@@ -77,10 +91,30 @@ def build_response_card(title, subtitle, options):
             'buttons': buttons
         }]
     }
+    
+""" --- Build a responseCard with a movie name as title, rating as a subtitle, and moviePoster with an attached URL to its provider --- """ 
+
+def build_response_card_for_movies(movies, movieLinks, moviePosters,ratings):
+    responseCards = []
+    for i in range(0,min(10,len(movies))):
+        responseCards.append(
+            {
+            'title': movies[i],
+            'subTitle': 'Average Voting: {}'.format(ratings[i]),
+            'imageUrl': moviePosters[i],
+            'attachmentLinkUrl': movieLinks[i]
+           }
+            )
+            
+    return {
+        'contentType': 'application/vnd.amazonaws.card.generic',
+        'version': 1,
+        'genericAttachments': responseCards
+    }
 
 """ --- Build a list of potential options for a given slot, to be used in responseCard generation --- """  
 
-def build_options(slot, category):
+def build_options(slot):
     if slot == 'category':
         return [
             {'text': 'Top Rated', 'value': '1'},
@@ -88,13 +122,17 @@ def build_options(slot, category):
             {'text': 'Newly Released', 'value': '3'},
             {'text': 'Trending Today', 'value': '4'}
         ]
-
-""" --- Build a list of intents availaible, to be used in responseCard generation --- """  
         
+""" --- Build a list of intents availaible, to be used in responseCard generation --- """  
+
 def build_intent_suggestions(intentName):
+    """
+    Build a list of intents availaible, to be used in responseCard generation.
+    """
     if intentName == 'Welcome':
         return [
-            {'text': 'Recommend Movies', 'value': 'suggest some movies'},  
+            {'text': 'Recommend Movies', 'value': 'suggest some movies'},
+            
         ]
 
 """ --- Validate and build a response for Amazon Lex --- """ 
@@ -127,7 +165,6 @@ def get_movie(intent_request):
 
     if source == 'DialogCodeHook':
         slots = get_slots(intent_request)
-        ''' Validate slot values'''
         validation_result = validate_choosen_category(category)
         
         if not validation_result['isValid']:
@@ -142,118 +179,164 @@ def get_movie(intent_request):
                 build_response_card(
                     'Choose a {}'.format(validation_result['violatedSlot']),
                     validation_result['message']['content'],
-                    build_options(validation_result['violatedSlot'], category)
+                    build_options(validation_result['violatedSlot'])
                 )
             )
         output_session_attributes = intent_request['sessionAttributes'] if intent_request['sessionAttributes'] is not None else {}
         return delegate(output_session_attributes, slots)
         
+          
     if category == "1":
         movies = get_top_rated(category)[0]
         movieId =get_top_rated(category)[1]
+        moviePosters =get_top_rated(category)[2]
+        ratings = get_top_rated(category)[3]
         movieLinks = get_movie_provider(movieId)
-        return close(intent_request['sessionAttributes'],
+       
+        return closeWithResponseCard(intent_request['sessionAttributes'],
                  'Fulfilled',
                  {'contentType': 'PlainText',
-                  'content': 'Our top rated movies are:\n' + '\n'.join(['{}:\t{}'.format(*t) for t in zip(movies,movieLinks)])})
+                  'content': 'Top Rated Movies in our list are:'},
+                  build_response_card_for_movies(movies,movieLinks,moviePosters,ratings)
+                  )
                   
     elif category == "2":
         movies = get_popular(category)[0]
         movieId =get_popular(category)[1]
+        moviePosters =get_popular(category)[2]
+        ratings =get_popular(category)[3]
         movieLinks = get_movie_provider(movieId)
-        return close(intent_request['sessionAttributes'],
+        
+        return closeWithResponseCard(intent_request['sessionAttributes'],
                  'Fulfilled',
                  {'contentType': 'PlainText',
-                  'content': 'Most popular movies are:\n' + '\n'.join(['{}:\t{}'.format(*t) for t in zip(movies,movieLinks)])})
+                  'content': 'Most Popular Movies in our list are:'},
+                  build_response_card_for_movies(movies,movieLinks,moviePosters,ratings)
+                  )
                   
     elif category == "3":
         movies = get_newly_released(category)[0]
         movieId =get_newly_released(category)[1]
+        moviePosters =get_newly_released(category)[2]
+        ratings =get_newly_released(category)[3]
         movieLinks = get_movie_provider(movieId)
-        return close(intent_request['sessionAttributes'],
+        
+        return closeWithResponseCard(intent_request['sessionAttributes'],
                  'Fulfilled',
                  {'contentType': 'PlainText',
-                  'content': 'Newly released titles are:\n' + '\n'.join(['{}:\t{}'.format(*t) for t in zip(movies,movieLinks)])})
+                  'content': 'Newly Released Movies are:'},
+                  build_response_card_for_movies(movies,movieLinks,moviePosters,ratings)
+                  )
                   
     elif category == "4":
         movies = get_trending_today(category)[0]
         movieId =get_trending_today(category)[1]
+        moviePosters =get_trending_today(category)[2]
+        ratings =get_trending_today(category)[3]
         movieLinks = get_movie_provider(movieId)
-        return close(intent_request['sessionAttributes'],
+        
+        return closeWithResponseCard(intent_request['sessionAttributes'],
                  'Fulfilled',
                  {'contentType': 'PlainText',
-                  'content': 'Top trending movies of the day are:\n' + '\n'.join(['{}:\t{}'.format(*t) for t in zip(movies,movieLinks)])})
+                  'content': 'Movies Trending Today are: '},
+                  build_response_card_for_movies(movies,movieLinks,moviePosters,ratings)
+                  )
     else:
-        print("Not Supported option")
         return close(intent_request['sessionAttributes'],
                  'Fulfilled',
                  {'contentType': 'PlainText',
                   'content': "Sorry, I can't help with that"})
-    
+
 """ --- Below are a bunch of functions to help in get movies according to a category chosen by user --- """ 
+    
 def get_top_rated(category):
     '''
     api_key = Environmental Variable set in Lambda function
     '''
-    api_key=os.environ.get('api_key')   
+    api_key=os.environ.get('api_key')
     http = urllib3.PoolManager()
     r = http.request('GET', "https://api.themoviedb.org/3/movie/{}?api_key={}&language=en-US&page=1".format("top_rated",api_key))
     response=json.loads(r.data.decode('utf-8'))
     result=response['results']
     movieList = []
     movieId =[]
+    moviePosters = []
+    vote_average = []
     for movie in result:
         movieList.append(movie['title'])
         movieId.append(movie['id'])
-    return [movieList,movieId]
+        moviePosters.append("https://image.tmdb.org/t/p/original"+movie['poster_path'])
+        vote_average.append(movie['vote_average'])
+    return [movieList,movieId,moviePosters,vote_average]
 
 def get_newly_released(category):
+    '''
+    api_key = Environmental Variable set in Lambda function
+    '''
     api_key=os.environ.get('api_key')
     http = urllib3.PoolManager()
     r = http.request('GET', "https://api.themoviedb.org/3/movie/{}?api_key={}&language=en-US&page=1".format("now_playing",api_key))
     response=json.loads(r.data.decode('utf-8'))
-    # print("Response from API: {}".format(response))
     result=response['results']
     movieList = []
     movieId =[]
+    moviePosters = []
+    vote_average = []
     for movie in result:
         movieList.append(movie['title'])
         movieId.append(movie['id'])
-    return [movieList,movieId]
+        moviePosters.append("https://image.tmdb.org/t/p/original"+movie['poster_path'])
+        vote_average.append(movie['vote_average'])
+    return [movieList,movieId,moviePosters,vote_average]
     
 def get_popular(category):
+    '''
+    api_key = Environmental Variable set in Lambda function
+    '''
     api_key=os.environ.get('api_key')
     http = urllib3.PoolManager()
     r = http.request('GET', "https://api.themoviedb.org/3/movie/{}?api_key={}&language=en-US&page=1".format("top_rated",api_key))
     response=json.loads(r.data.decode('utf-8'))
-    # print("Response from API: {}".format(response))
     result=response['results']
     movieList = []
     movieId =[]
+    moviePosters = []
+    vote_average = []
     for movie in result:
         movieList.append(movie['title'])
         movieId.append(movie['id'])
-    return [movieList,movieId]
+        moviePosters.append("https://image.tmdb.org/t/p/original"+movie['poster_path'])
+        vote_average.append(movie['vote_average'])
+    return [movieList,movieId,moviePosters,vote_average]
 
 def get_trending_today(category):
+    '''
+    api_key = Environmental Variable set in Lambda function
+    '''
     api_key=os.environ.get('api_key')
     http = urllib3.PoolManager()
     r = http.request('GET', "https://api.themoviedb.org/3/trending/{}/day?api_key={}".format("movie",api_key))
     response=json.loads(r.data.decode('utf-8'))
-    # print("Response from API: {}".format(response))
     result=response['results']
     movieList = []
     movieId =[]
+    moviePosters = []
+    vote_average = []
     for movie in result:
         movieList.append(movie['title'])
         movieId.append(movie['id'])
-    return [movieList,movieId]
+        moviePosters.append("https://image.tmdb.org/t/p/original"+movie['poster_path'])
+        vote_average.append(movie['vote_average'])
+    return [movieList,movieId,moviePosters,vote_average]
     
 def get_movie_provider(movieId):
+    '''
+    api_key = Environmental Variable set in Lambda function
+    '''
     api_key=os.environ.get('api_key')
     http = urllib3.PoolManager()
     movieProviders = []
-    # print("get_movie_provider function called")
+    moviePosters = []
     for id in movieId:
         r = http.request('GET', "https://api.themoviedb.org/3/movie/{}/watch/providers?api_key={}".format(id,api_key))
         response=json.loads(r.data.decode('utf-8'))
@@ -262,18 +345,15 @@ def get_movie_provider(movieId):
             link = result["US"]["link"]
             movieProviders.append(link)
         else:
-            link = "No Provider Available currently"
+            link = "https://cutt.ly/5QGm4jF"
             movieProviders.append(link)
     return movieProviders
+    
 
 """ --- Intents --- """
-
+    
 def dispatch(intent_request):
-    """
-    Called when the user specifies an intent for this bot.
-    """
     intent_name = intent_request['currentIntent']['name']
-    print(intent_name)
     if intent_name == 'RecommendMovie':
         return get_movie(intent_request)
     if intent_name == 'Welcome':
@@ -291,7 +371,6 @@ def dispatch(intent_request):
     raise Exception('Intent with name ' + intent_name + ' not supported')
 
 """ --- Main handler --- """
-    
+
 def lambda_handler(event, context):
     return dispatch(event)
-    
