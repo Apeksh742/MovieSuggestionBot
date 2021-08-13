@@ -1,5 +1,5 @@
-# MovieRecommendationBot
-A simple bot made using AWS Amazon Lex to recommend movies to its users.
+# MovieSuggestionBot
+A simple bot made using AWS Amazon Lex to suggest some good movies to its users.
 
 ### What is Amazon Lex?
 
@@ -26,12 +26,11 @@ To use this code in your lamda function, you have to do few things:
 3. These are some things you can customize:\
     i) **category** : Slot variable to take input from user\
    ii) **WelcomeIntent** : Intent for greeting user\
-  iii) **RecommendMovie** : Intent for recommending movies
+  iii) **RecommendMovie** : Intent for suggesting movies
   
 ## Source of Movie Dataset API:
 
 ### [The Movie Database (TMDb)](https://www.themoviedb.org/)
-
 
 
 ## Amazon Lex Console configuration of my bot: 
