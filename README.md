@@ -37,6 +37,8 @@ To use this code in your lamda function, you have to do few things:
 
 ![Amazon Lex Bot Working](https://github.com/Apeksh742/MovieRecommendationBot/blob/main/images/chatBot.png?raw=true)
 
+![Amazon Lex Bot Working 2](https://github.com/Apeksh742/MovieRecommendationBot/blob/main/images/chatBot2.png?raw=true)
+
 ### Testing Bot in Slack:
 
-![Lex in Slack](https://github.com/Apeksh742/MovieRecommendationBot/blob/main/images/slackIntegration.png?raw=true)
+![Lex in Slack](https://github.com/Apeksh742/MovieRecommendationBot/blob/main/images/slackIntegration1.png?raw=true)
